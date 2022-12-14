@@ -153,18 +153,51 @@ def dataXlsx(id1, id2, id3, id4):
             data_dict[-1] = sheet[i][11].value
             data.append(data_dict)
     print(data)
-    wb = load_workbook('to_data.xlsx')
-    ws = wb.active
+    wb = load_workbook('your.xlsx')
+    sheet = wb.active
     a = 0
-    for i in (2, len(data)):
-        for x in range(12):
-            print(a)
-            dat = data[a]
-            ws[i][x].value = data[a][x]
+    for i in range(2, len(data)+2):    
+        if a == len(data)+1:
+            d = data[a]
+            sheet[i][0].value = d[0]
+            # print(sheet[i][3].value)
+            sheet[i][1].value = d[2]
+            sheet[i][2].value = d[3]
+            sheet[i][3].value = d[4]
+            sheet[i][4].value = d[5]
+            sheet[i][5].value = d[6]
+            sheet[i][6].value = d[7]
+            break
+        else:
+            d = data[a]
+            sheet[i][0].value = d[0]
+            sheet[i][1].value = d[2]
+            sheet[i][2].value = d[3]    
+            sheet[i][3].value = d[4]
+            sheet[i][4].value = d[5]
+            try:
+                if float(d[4]) != 0.0 or float(d[5]) != 0.0:
+                    # print(d[4], d[5])
+                    sum = (d[4] * d[5])
+                    sheet[i][5].value = round(sum, 2)
+                else:
+                    sheet[i][5].value = 0
+            except Exception as ex:
+                pass
+                
+            sheet[i][6].value = d[7]
             a+=1
-
-            wb.save('to_data.xlsx')
+    wb.save('your.xlsx')
     
             
+
+def clear():
+    wb = load_workbook('your.xlsx')
+    sheet = wb.active
+    for i in range(2, 150):
+        for x in range(7):
+            sheet[i][x].value = None
+    wb.save('your.xlsx')
+clear()
 
 

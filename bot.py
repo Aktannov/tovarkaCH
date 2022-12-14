@@ -1,11 +1,12 @@
 from aiogram import Dispatcher, types, executor, Bot
 from openpyxl import load_workbook, Workbook
 from config import load_config
-from data import data_by_id, data_to_notifications, dataXlsx
+from data import data_by_id, data_to_notifications, dataXlsx, clear
 from connect_db import subscriber_exists, add_subscriber, update_subscription, subscriber_status, get_subscriptions, get_len, add_len
 import asyncio
 import logging
 import keyboards as kb
+
 
 
 wbSearch = load_workbook('data.xlsx')
@@ -45,100 +46,100 @@ async def len(message: types.Message):
 
 
 # Обрабатываем
-@dp.message_handler(commands='info')
-async def info(message: types.Message):
-    # RU
-    if get_len(message.from_user.id)[0][0] == 'ru':
-        id = str(message.text[6:])
-        if id.__len__() == 7 and id[:3] == 'GX-':
-            """Приводим все возможные виды GX кода"""
-            ex1 = id
-            ex2 = id[3:]
-            ex3 = id[4:]
-            ex4 = id[5:]
+# @dp.message_handler(commands='info')
+# async def info(message: types.Message):
+#     # RU
+#     if get_len(message.from_user.id)[0][0] == 'ru':
+#         id = str(message.text[6:])
+#         if id.__len__() == 7 and id[:3] == 'GX-':
+#             """Приводим все возможные виды GX кода"""
+#             ex1 = id
+#             ex2 = id[3:]
+#             ex3 = id[4:]
+#             ex4 = id[5:]
 
-            await message.answer(text='Подождите минутку...')
+#             await message.answer(text='Подождите минутку...')
 
-            data = asyncio.create_task(data_by_id(ex1, ex2, ex3, ex4))
-            await data
-
-
-            """Проводим проверку и отправляем результат"""
-            if not data.result()[0]:
-                await message.answer(text='Товаров с таким кодом нет!')
-            else:
-                for i in range((data.result().__len__())):
-                    await message.answer(text=data.result()[i])
-        elif id.__len__() == 4:
-            """Приводим все возможные виды GX кода"""
-            ex1 = 'GX-' + id
-            ex2 = id
-            ex3 = id[1:]
-            ex4 = id[2:]
+#             data = asyncio.create_task(data_by_id(ex1, ex2, ex3, ex4))
+#             await data
 
 
-            await message.answer(text='Подождите минутку...')
+#             """Проводим проверку и отправляем результат"""
+#             if not data.result()[0]:
+#                 await message.answer(text='Товаров с таким кодом нет!')
+#             else:
+#                 for i in range((data.result().__len__())):
+#                     await message.answer(text=data.result()[i])
+#         elif id.__len__() == 4:
+#             """Приводим все возможные виды GX кода"""
+#             ex1 = 'GX-' + id
+#             ex2 = id
+#             ex3 = id[1:]
+#             ex4 = id[2:]
 
-            data = asyncio.create_task(data_by_id(ex1, ex2, ex3, ex4))
 
-            await data
+#             await message.answer(text='Подождите минутку...')
+
+#             data = asyncio.create_task(data_by_id(ex1, ex2, ex3, ex4))
+
+#             await data
 
 
-            """Проводим проверку и отправляем результат"""
-            if not data.result()[0]:
-                await message.answer(text='Товаров с таким кодом нет!')
-            else:
-                for i in range((data.result().__len__())):
-                    await message.answer(text=data.result()[i])
-        else:
-            await message.answer(text='Строго в фортмате GX-0000 или 0000!!!')
+#             """Проводим проверку и отправляем результат"""
+#             if not data.result()[0]:
+#                 await message.answer(text='Товаров с таким кодом нет!')
+#             else:
+#                 for i in range((data.result().__len__())):
+#                     await message.answer(text=data.result()[i])
+#         else:
+#             await message.answer(text='Строго в фортмате GX-0000 или 0000!!!')
 
-    # KGZ
-    elif get_len(message.from_user.id)[0][0] == 'kgz':
-        id = message.text[6:]
-        if len(id) == 7 and id[:3] == 'GX-':
-            """Приводим все возможные виды GX кода"""
-            ex1 = id
-            ex2 = id[3:]
-            ex3 = id[4:]
-            ex4 = id[5:]
+#     # KGZ
+#     elif get_len(message.from_user.id)[0][0] == 'kgz':
+#         id = message.text[6:]
+#         if len(id) == 7 and id[:3] == 'GX-':
+#             """Приводим все возможные виды GX кода"""
+#             ex1 = id
+#             ex2 = id[3:]
+#             ex3 = id[4:]
+#             ex4 = id[5:]
 
-            await message.answer(text='Бир мүнөт күтөө туруңуз...')
+#             await message.answer(text='Бир мүнөт күтөө туруңуз...')
 
-            data = asyncio.create_task(data_by_id(ex1, ex2, ex3, ex4))
+#             data = asyncio.create_task(data_by_id(ex1, ex2, ex3, ex4))
 
-            await data
-            print(len(data.result()))
+#             await data
+#             print(len(data.result()))
 
-            """Проводим проверку и отправляем результат"""
-            if not data.result()[0]:
-                await message.answer(text='Мындай коду бар товарлар жок!')
-            else:
-                for i in range(len(data.result())):
-                    await message.answer(text=data.result()[i])
-        elif len(id) == 4:
-            """Приводим все возможные виды GX кода"""
-            ex1 = 'GX-' + id
-            ex2 = id
-            ex3 = id[1:]
-            ex4 = id[2:]
-            print(ex3, ex4)
+#             """Проводим проверку и отправляем результат"""
+#             if not data.result()[0]:
+#                 await message.answer(text='Мындай коду бар товарлар жок!')
+#             else:
+#                 for i in range(len(data.result())):
+#                     await message.answer(text=data.result()[i])
+#         elif len(id) == 4:
+#             """Приводим все возможные виды GX кода"""
+#             ex1 = 'GX-' + id
+#             ex2 = id
+#             ex3 = id[1:]
+#             ex4 = id[2:]
+#             print(ex3, ex4)
 
-            await message.answer(text='Бир мүнөт күтөө туруңуз...')
+#             await message.answer(text='Бир мүнөт күтөө туруңуз...')
 
-            data = asyncio.create_task(data_by_id(ex1, ex2, ex3, ex4))
+#             data = asyncio.create_task(data_by_id(ex1, ex2, ex3, ex4))
 
-            await data
-            print(len(data.result()))
+#             await data
+#             print(len(data.result()))
 
-            """Проводим проверку и отправляем результат"""
-            if not data.result()[0]:
-                await message.answer(text='Мындай коду бар товарлар жок!')
-            else:
-                for i in range(len(data.result())):
-                    await message.answer(text=data.result()[i])
-        else:
-            await message.answer(text='Катуу форматта болуш керек GX-0000 же 0000!!!')
+#             """Проводим проверку и отправляем результат"""
+#             if not data.result()[0]:
+#                 await message.answer(text='Мындай коду бар товарлар жок!')
+#             else:
+#                 for i in range(len(data.result())):
+#                     await message.answer(text=data.result()[i])
+#         else:
+#             await message.answer(text='Катуу форматта болуш керек GX-0000 же 0000!!!')
 
 
 
@@ -234,7 +235,7 @@ async def notifications(delay):
                     str_to_send += f'Ваш товар с треком {tup[1]} пришел!\n'
             await bot.send_message(obj[1], str_to_send)
 
-@dp.message_handler(commands=['test'])
+@dp.message_handler(commands=['info'])
 async def tester(message: types.Message):
     if get_len(message.from_user.id)[0][0] == 'ru':
         id = str(message.text[6:])
@@ -246,10 +247,11 @@ async def tester(message: types.Message):
             ex4 = id[5:]
 
             await message.answer(text='Подождите минутку...')
-
-            asyncio.create_task(dataXlsx(ex1, ex2, ex3, ex4))
-            fail = open('to_data.wlsx', 'rb')
-            await message.answer_document(message.chat.id, document=fail)
+            clear()
+            dataXlsx(ex1, ex2, ex3, ex4)
+            # fail = open('to_data.wlsx', 'rb')
+            file = open('your.xlsx', 'rb')
+            await message.answer_document(file)
         elif id.__len__() == 4:
             """Приводим все возможные виды GX кода"""
             ex1 = 'GX-' + id
@@ -259,11 +261,12 @@ async def tester(message: types.Message):
 
 
             await message.answer(text='Подождите минутку...')
+            clear()
+            dataXlsx(ex1, ex2, ex3, ex4)
 
-            asyncio.create_task(dataXlsx(ex1, ex2, ex3, ex4))
-
-            fail = open('to_data.wlsx', 'rb')
-            await message.answer_document(message.chat.id, document=fail)
+            # fail = open('to_data.xlsx', 'rb')
+            file = open('your.xlsx', 'rb')
+            await message.answer_document(file)
         else:
             await message.answer(text='Строго в фортмате GX-0000 или 0000!!!')
 
@@ -278,11 +281,12 @@ async def tester(message: types.Message):
             ex4 = id[5:]
 
             await message.answer(text='Бир мүнөт күтөө туруңуз...')
+            clear()
+            dataXlsx(ex1, ex2, ex3, ex4)
 
-            asyncio.create_task(dataXlsx(ex1, ex2, ex3, ex4))
-
-            fail = open('to_data.wlsx', 'rb')
-            await message.answer_document(message.chat.id, document=fail)
+            # fail = open('to_data.wlsx', 'rb')
+            file = open('your.xlsx', 'rb')
+            await message.answer_document(file)
 
         elif len(id) == 4:
             """Приводим все возможные виды GX кода"""
@@ -293,15 +297,21 @@ async def tester(message: types.Message):
             print(ex3, ex4)
 
             await message.answer(text='Бир мүнөт күтөө туруңуз...')
+            clear()
+            dataXlsx(ex1, ex2, ex3, ex4)
 
-            asyncio.create_task(dataXlsx(ex1, ex2, ex3, ex4))
-
-            fail = open('to_data.wlsx', 'rb')
-            await message.answer_document(message.chat.id, document=fail)
+            # fail = open('to_data.wlsx', 'rb')
+            file = open('your.xlsx', 'rb')
+            await message.answer_document(file)
 
         else:
             await message.answer(text='Катуу форматта болуш керек GX-0000 же 0000!!!')
+    
 
+# @dp.message_handler(commands='q')
+# async def q(message: types.Message):
+#     file = open('information.xlsx', 'rb')
+#     await message.answer_document(file)
 
 
 if __name__ == '__main__':
